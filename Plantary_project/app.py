@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>Hello World!</p>"
 
 
 @app.route("/Super_simple")
@@ -22,4 +22,11 @@ use below command to run
 
 3.run the application
     flask run 
+
+CTRL+C to stop server.
+
+
+ny default it is get mrthod. (test with postman)
+
+It will auto restart on change so be aware.
 """
