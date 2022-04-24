@@ -1,4 +1,5 @@
-from flask import Flask
+from email import message
+from flask import Flask , jsonify
 
 app = Flask(__name__)
 
@@ -31,4 +32,6 @@ ny default it is get mrthod. (test with postman)
 It will auto restart on change so be aware.
 """
 
-@app.route("/")
+@app.route("/Super_simple2")
+def super_simple2():
+    return jsonify(message = "Hello from Planetary API")
