@@ -48,5 +48,10 @@ headers is characteristics of the request or response.
 
 like Status code which tell you that request was successful or not.
 
+200 -> ok
+404 -> not found
+
+
+
 
 """
