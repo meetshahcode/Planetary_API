@@ -34,7 +34,7 @@ It will auto restart on change so be aware.
 
 @app.route("/Super_simple2")
 def super_simple2():
-    return jsonify(message = "Hello from Planetary API",id = 2)
+    return jsonify(message = "Hello from Planetary API",id = 2) ,200
 """
 jsonify is helpfull to create json file as shown as above example.
 """
@@ -51,7 +51,14 @@ like Status code which tell you that request was successful or not.
 200 -> ok
 404 -> not found
 
+"""
+
+@app.route("/not_found")
+def not_found():
+    return jsonify(message="That resource was not found."),404
 
 
+
+"""
 
 """
