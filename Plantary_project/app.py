@@ -34,4 +34,5 @@ It will auto restart on change so be aware.
 
 @app.route("/Super_simple2")
 def super_simple2():
-    return jsonify(message = "Hello from Planetary API")
+    return jsonify(message = "Hello from Planetary API",id = 2)
+
