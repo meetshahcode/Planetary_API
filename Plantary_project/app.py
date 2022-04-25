@@ -1,7 +1,15 @@
+from email.mime import base
 from flask import Flask,jsonify,request, url_for
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String , Float
+import os
 
 app = Flask(__name__)
 #app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
+
+
 
 @app.route("/")
 def hello_world():
@@ -67,3 +75,27 @@ def parameters():
     name = request.args.get('name')
     age = int(request.args.get('age'))
     return jsonify(message = f"Name is  {name} and age is {age}."),200
+"""
+URL Parameters with mordern pattern
+and fixed datatype
+
+<Flask_datatype:Name of varible>
+
+on site 
+<>/parameter_new/xyz/20
+"""
+@app.route("/parameter_new/<string:name>/<int:age>")
+def parameters2(name : str , age : int):
+    if age < 18 :
+        return jsonify(message = f"Sorry {name},you are not allow. your age is {age} which is below 18."),401
+    else :
+        return jsonify(message = f"Name is  {name} and age is {age}."),200
+
+
+
+"""
+working with Relation Database
+SQLLite and SQLAlchemy
+
+install flask-SQLAlchemy
+"""
