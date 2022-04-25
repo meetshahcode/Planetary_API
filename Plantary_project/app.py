@@ -1,7 +1,7 @@
-from email import message
-from flask import Flask , jsonify
+from flask import Flask,jsonify,request, url_for
 
 app = Flask(__name__)
+#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 @app.route("/")
 def hello_world():
@@ -60,5 +60,10 @@ def not_found():
 
 
 """
-
+URL Parameters
 """
+@app.route("/parameters")
+def parameters():
+    name = request.args.get('name')
+    age = int(request.args.get('age'))
+    return jsonify(message = f"Name is  {name} and age is {age}."),200
