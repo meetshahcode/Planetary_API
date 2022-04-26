@@ -9,7 +9,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
 
-
+db = SQLAlchemy(app)
 
 @app.route("/")
 def hello_world():
@@ -99,3 +99,10 @@ SQLLite and SQLAlchemy
 
 install flask-SQLAlchemy
 """
+
+
+"""
+Database model (ORM)
+"""
+class User(db.Model):
+    id = Column(Integer, )
