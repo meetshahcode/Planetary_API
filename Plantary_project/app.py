@@ -15,6 +15,53 @@ app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'pla
 
 db = SQLAlchemy(app)
 
+@app.cli.add_command("db_create")
+def db_create():
+    db.create_all()
+    print("Database Created !!")
+
+@app.cli.add_command("db_drop")
+def db_drop():
+    db.drop_all()
+    print("database Dropped !!")
+
+@app.cli.command("db_seed")
+def db_seed():
+    Mercury = Planet(
+        planet_name = "Mercury",
+        Planet_type = "Class D",
+        home_star = "Sun",
+        mass = 3.258e23,
+        redius = 1516,
+        distance = 35.98e6
+    )
+    Venus = Planet(
+        planet_name = "Venus",
+        Planet_type = "Class K",
+        home_star = "Sun",
+        mass = 4.867e24,
+        redius = 3760,
+        distance = 67.24e6
+    )
+    Earth = Planet(
+        planet_name = "Earth",
+        Planet_type = "Class M",
+        home_star = "Sun",
+        mass = 5.972e24,
+        redius = 3959,
+        distance = 92.96e6
+    )
+    db.session.add(Mercury)
+    db.session.add(Venus)
+    db.session.add(Earth)
+    test_user = User(
+        first_name = "Kalpana",
+        last_name = "Chawla",
+        email = "kal.cha@nasa.com",
+        password = "passworD" 
+    )
+    db.session.add(test_user)
+
 
 @app.route("/")
 def hello_world():
