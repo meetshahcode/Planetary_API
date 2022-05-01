@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String , Float
 import os
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager,jwt_manager,jwt_required,create_access_token,create_refresh_token
-
+from flask_mail import Mail,Message
 
 app = Flask(__name__)
 #app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -12,10 +12,19 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
 app.config["JWT_SECRET_KEY"] = 'unique_key'
 
+app.config['MAIL_SERVER']='smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = ""
+app.config['MAIL_PASSWORD'] = ""
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 jwt = JWTManager(app)
+mail = Mail(app)
 
 
 
@@ -207,6 +216,18 @@ def login():
         return jsonify(message="Login succeeded !!",access_token = access_token),200
     else:
         return jsonify(message="Bad email id and password"),401
+
+@app.route('/retrieve_password/<string:email>',methods=["GET"])
+def retrieve_password(email : str):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        msg = Message("Your planetary API password is "+user.password,
+        sender="admin@planetary-noreplay.com",
+        recipients=[email])
+        mail.send(msg)
+        return jsonify(message = "Password is sent to you ragistered id."),201
+    else:
+        return jsonify(message = "Please enter registered email id."),409
 """
 working with Relation Database
 SQLLite and SQLAlchemy
