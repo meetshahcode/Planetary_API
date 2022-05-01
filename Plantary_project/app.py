@@ -1,4 +1,8 @@
+import email
 from email.mime import base
+from enum import unique
+import string
+from turtle import distance
 from flask import Flask,jsonify,request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String , Float
@@ -10,6 +14,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
 
 db = SQLAlchemy(app)
+
 
 @app.route("/")
 def hello_world():
@@ -104,5 +109,21 @@ install flask-SQLAlchemy
 """
 Database model (ORM)
 """
+
 class User(db.Model):
-    id = Column(Integer, )
+    __tablename__ = 'users'
+    user_id = Column(Integer, primary_key = True)
+    first_name  = Column(String)
+    last_name  = Column(String)
+    email =  Column(String,unique = True)
+    password = Column(string)
+
+class Planet(db.model):
+    __tablename__ = 'planets'
+    planet_id = Column(Integer, primary_key = True)
+    planet_name  = Column(String)
+    planet_type = Column(String)
+    home_star = Column(String)
+    mass = Column(Float)
+    redius = Column(Float)
+    distance = Column(Float)
