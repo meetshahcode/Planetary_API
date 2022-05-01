@@ -1,4 +1,3 @@
-from email import message
 from flask import Flask,jsonify,request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String , Float
@@ -194,7 +193,20 @@ def register():
         else :
             return jsonify(message = "Please provide all the data"),500
 
-
+@app.route("/login",methods = ["POST"])
+def login():
+    if request.is_json:
+        email = request.json["email"]
+        password = request.json["password"]
+    else:
+        email = request.form["email"]
+        password = request.form["password"]
+    login_user = User.query.filter_by(email=email,password=password).first()
+    if login_user:
+        access_token = create_access_token(identity=email)
+        return jsonify(message="Login succeeded !!",access_token = access_token),200
+    else:
+        return jsonify(message="Bad email id and password"),401
 """
 working with Relation Database
 SQLLite and SQLAlchemy
