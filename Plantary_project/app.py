@@ -1,35 +1,45 @@
-import email
-from email.mime import base
-from enum import unique
-import string
-from turtle import distance
+
+from dataclasses import fields
 from flask import Flask,jsonify,request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String , Float
 import os
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 #app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLAlCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'planets.db')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
-@app.cli.add_command("db_create")
+
+"""
+use flask db_create command in terminal
+"""
+@app.cli.command("db_create")
 def db_create():
     db.create_all()
     print("Database Created !!")
 
-@app.cli.add_command("db_drop")
+"""
+use flask db_drop command in terminal
+"""
+@app.cli.command("db_drop")
 def db_drop():
     db.drop_all()
     print("database Dropped !!")
 
+
+"""
+use flask db_seed command in terminal
+"""
 @app.cli.command("db_seed")
 def db_seed():
     Mercury = Planet(
         planet_name = "Mercury",
-        Planet_type = "Class D",
+        planet_type = "Class D",
         home_star = "Sun",
         mass = 3.258e23,
         redius = 1516,
@@ -37,7 +47,7 @@ def db_seed():
     )
     Venus = Planet(
         planet_name = "Venus",
-        Planet_type = "Class K",
+        planet_type = "Class K",
         home_star = "Sun",
         mass = 4.867e24,
         redius = 3760,
@@ -45,7 +55,7 @@ def db_seed():
     )
     Earth = Planet(
         planet_name = "Earth",
-        Planet_type = "Class M",
+        planet_type = "Class M",
         home_star = "Sun",
         mass = 5.972e24,
         redius = 3959,
@@ -61,6 +71,8 @@ def db_seed():
         password = "passworD" 
     )
     db.session.add(test_user)
+    db.session.commit()
+    print("Database seeded!!")
 
 
 @app.route("/")
@@ -143,7 +155,14 @@ def parameters2(name : str , age : int):
     else :
         return jsonify(message = f"Name is  {name} and age is {age}."),200
 
-
+"""
+only with get request
+"""
+@app.route('/planet',methods = ["GET"])
+def planets_list():
+    planets_li = Planet.query.all()
+    re = planets_schema.dump(planets_li)
+    return jsonify(re)
 
 """
 working with Relation Database
@@ -163,9 +182,9 @@ class User(db.Model):
     first_name  = Column(String)
     last_name  = Column(String)
     email =  Column(String,unique = True)
-    password = Column(string)
+    password = Column(String)
 
-class Planet(db.model):
+class Planet(db.Model):
     __tablename__ = 'planets'
     planet_id = Column(Integer, primary_key = True)
     planet_name  = Column(String)
@@ -174,3 +193,16 @@ class Planet(db.model):
     mass = Column(Float)
     redius = Column(Float)
     distance = Column(Float)
+
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ("user_id","first_name","last_name","email","password")
+    
+class PlanetSchema(ma.Schema):
+    class Meta :
+        fields  = ("planet_id","planet_name","planet_type","home_star","mass","redius","distance")
+    
+user_schema = UserSchema()
+users_schema = UserSchema(many = True)
+planet_schema = PlanetSchema()
+planets_schema = PlanetSchema(many = True)
