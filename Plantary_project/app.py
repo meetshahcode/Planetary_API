@@ -1,5 +1,4 @@
-
-from dataclasses import fields
+from email import message
 from flask import Flask,jsonify,request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String , Float
@@ -158,11 +157,36 @@ def parameters2(name : str , age : int):
 """
 only with get request
 """
-@app.route('/planet',methods = ["GET"])
+@app.route('/planets',methods = ["GET"])
 def planets_list():
     planets_li = Planet.query.all()
     re = planets_schema.dump(planets_li)
     return jsonify(re)
+
+@app.route('/users',methods = ["GET"])
+def users_list():
+    planets_li = User.query.all()
+    re = users_schema.dump(planets_li)
+    return jsonify(re)
+
+@app.route("/register",methods = ["POST"])
+def register():
+    email = request.form['email']
+    test = User.query.filter_by(email=email).first()
+    if test:
+        return jsonify(message = "The email is already exists."), 409
+    else :
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        password = request.form['password']
+        if first_name and last_name and password :
+            user = User(first_name = first_name,last_name = last_name, password = password ,email = email)
+            db.session.add(user)
+            db.session.commit()
+            return jsonify(message = "User created Successfully"), 201
+        else :
+            return jsonify(message = "Please provide all the data"),500
+
 
 """
 working with Relation Database
@@ -196,7 +220,7 @@ class Planet(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("user_id","first_name","last_name","email","password")
+        fields = ("user_id","first_name","last_name","email")
     
 class PlanetSchema(ma.Schema):
     class Meta :
