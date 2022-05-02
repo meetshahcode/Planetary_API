@@ -169,9 +169,7 @@ def parameters2(name : str , age : int):
     else :
         return jsonify(message = f"Name is  {name} and age is {age}."),200
 
-"""
-only with get request
-"""
+
 @app.route('/planets',methods = ["GET"])
 def planets_list():
     planets_li = Planet.query.all()
@@ -228,6 +226,40 @@ def retrieve_password(email : str):
         return jsonify(message = "Password is sent to you ragistered id."),201
     else:
         return jsonify(message = "Please enter registered email id."),409
+
+
+@app.route("/planet_details/<int:planet_id>",methods=["GET","POST"])
+def planet_details(planet_id):
+    planet = Planet.query.filter_by(planet_id=planet_id).first()
+    if planet:
+        result = planet_schema.dump(planet)
+        return jsonify(result)
+    else:
+        return jsonify(message = "The planet id does not exist."),404
+
+@app.route("/add_planet",methods=["POST"])
+def add_planet():
+    planet_name = request.form['planet_name']
+    test = Planet.query.filter_by(planet_name=planet_name).first()
+    if test:
+        return jsonify(message = " Planet already exist in database.")
+    else :
+        planet_type = request.form["planet_type"]
+        home_star = request.form["home_star"]
+        mass = float(request.form["mass"])
+        redius = float(request.form["radius"])
+        distance = float(request.form["distance"])
+
+        new_planet = Planet(planet_name = planet_name,
+        planet_type=planet_type,
+        home_star=home_star,
+        mass=mass,
+        redius=redius,
+        distance=distance) 
+
+        db.session.add(new_planet)
+        db.session.commit()
+        return jsonify(message= "You added new planet!")
 """
 working with Relation Database
 SQLLite and SQLAlchemy
