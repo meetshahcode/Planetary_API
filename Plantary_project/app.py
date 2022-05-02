@@ -237,7 +237,10 @@ def planet_details(planet_id):
     else:
         return jsonify(message = "The planet id does not exist."),404
 
+
+
 @app.route("/add_planet",methods=["POST"])
+@jwt_required()
 def add_planet():
     planet_name = request.form['planet_name']
     test = Planet.query.filter_by(planet_name=planet_name).first()
