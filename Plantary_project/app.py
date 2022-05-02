@@ -278,9 +278,22 @@ def update_planet():
         planet.redius = float(request.form["radius"])
         planet.distance = float(request.form["distance"])
         db.session.commit()
-        return jsonify(message = "Your planet data is updated !!")
+        return jsonify(message = "Your planet data is updated !!"),202
     else:
         return jsonify(message = "There is no such a planet in database.")
+
+@app.route("/remove_planet",methods = ["POST","DELETE"])
+@jwt_required()
+def remove_planet():
+    planet_id = int(request.form["planet_id"])
+    planet = Planet.query.filter_by(planet_id=planet_id).first()
+    if planet:
+        db.session.delete(planet)
+        db.session.commit()
+        return jsonify(message = "Planet is removed from the list"),202
+    else:
+        return jsonify(message = "There is no such a planet in database.")
+
 
 """
 working with Relation Database
